@@ -1,0 +1,84 @@
+first parts:
+
+1.petition page with first and last name with submit button and canvas
+
+for the signature:
+when the mouse goes down record the position. when the mouse moves draw a line to new x and y and remove
+the old coordinates
+
+when user clicks submit, first, last name and image data are submitted to the server.
+
+to get the signature image data:
+
+var c = document.querySelector('canvas');
+
+c.toDataURL(); - produces a base64 encoded data url
+
+<form method='POST'>
+    <input type= 'text'>
+    <input type= 'text'>
+    <input type = 'hidden'> change the value of the input with image data from the signature
+    <button><button>
+    </form>
+    <canvas></canvas>
+
+2. create a db for the project with a table named signatures. when a user posts a sig, insert data into this table
+
+CREATE TABLE signatures(
+id SERIAL PRIMARY KEY,
+first VARCHAR(300) NOT NULL,
+last VARCHAR(300) NOT NULL,
+signature text NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+
+when the data is successfully redirected with the post req.
+
+3. Thank you page for after signing the petition
+make sure if the user inserted a signature to the db. place a cookie to check if already signed
+
+4- page of everyone who ever signed the petition, no signature
+
+
+create index.js, body-parser, cookie-parser, express, express handlebars, express static, create a database,
+views, get and post route for the petition page,
+ 1 get for thankyou, 1 get for all signatures
+browser.js for the canvas
+
+//SQL SHIT:
+
+// var spicedPg = require('spiced-pg');
+//
+// var db = spicedPg('postgres:dbuser:password@localhost:5432/cities');
+//
+// db.query('SELECT * FROM cities WHERE id =1').then(function(results){
+//     console.log(results.rows);
+// }).catch(function(err){
+//     console.log(err);
+// });
+
+//to escape  characters in SQL
+
+// function findCity(name, id){
+//     db.query(
+//         'SELECT * FROM cities WHERE city = $1 AND id = $2',
+//         [name, id]
+//     ).then(function(result) {
+//         console.log(result.rows);
+//     }).catch(function(err){
+//         console.log(err);
+//     });
+// }
+// ///_______________________________________________
+
+don't store your signature in the session because it's too long
+
+query to our database using our signatureId to get all information from the databas
+
+______
+after the create hash function, call an insert to table function
+
+when running the checkpass function, to get the 'hashedpasswordfromdb', run a select whatever from database
+where email = ...
+
+checkpassword will also resolve a boolean value. if(doesMatch) - then redirect to ....

@@ -1,0 +1,72 @@
+
+
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-family: "PT sans";
+    background-color: white
+
+}
+
+header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+a{
+    text-decoration: none;
+}
+input{
+    width: 12vw;
+    height: 4vh;
+}
+
+#logOutBtn{
+    visibility:visible;
+    text-decoration: none;
+    text-align: center;
+    font-size: 15px;
+}
+
+#sideLogoSmall{
+    width: 13%;
+    height: 13%;
+    margin-left: 5px;
+}
+
+#dropBearLogo{
+    width: 80%;
+    height: 80%
+}
+
+.names{
+    display: flex;
+    justify-content: space-around;
+}
+
+.nameInp{
+    display: flex;
+    justify-content: space-around;
+}
+
+#mainImg{
+    width: 30vw;
+    height:30vh;
+}
+
+#thanksImg{
+    width: 30vw;
+    height:40vh;
+}
+
+#signImg{
+    border: 1px dashed black;
+    margin: 5px;
+}
+
+#canvas{
+    border: 1px dashed black;
+}
