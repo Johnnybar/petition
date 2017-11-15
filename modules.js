@@ -11,7 +11,6 @@ else{
     var pass = userInfo.password;
     dbUrl = `postgres:${user}:${pass}psql@localhost:5432/petition`;
 }
-// var db = spicedPg(process.env.DATABASE_URL ||`postgres:${user}:${pass}psql@localhost:5432/petition`);//CHECK IF WORKING
 var db = spicedPg(dbUrl);
 
 exports.signPetition = function(first, last, signature, userId) {
