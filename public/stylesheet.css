@@ -77,3 +77,7 @@ input{
 #canvas{
     border: 1px dashed black;
 }
+
+#bearDescription{
+    margin: 0 80px;
+}

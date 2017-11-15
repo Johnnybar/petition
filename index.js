@@ -37,7 +37,7 @@ app.get('/', (req,res) => {
     }
 });
 
-app.get('/register',csrfSecurity, (req, res)=>{
+app.get('/register', csrfSecurity, (req, res)=>{
     if(req.session.loggedIn){
         res.redirect('/petition');
     }
@@ -45,27 +45,28 @@ app.get('/register',csrfSecurity, (req, res)=>{
         res.render('register', {
             layout: 'main',
             csrfToken: req.csrfToken()
-
         });
     }
 });
 //AFTER USERS CLICKED REGISTER
-app.post('/register',csrfSecurity, (req,res) => {
-    modules.hashPassword(req.body.password)
-        .then((hashedPassword) => {
-            modules.registerUser(req.body.firstName, req.body.lastName, req.body.username, hashedPassword)
-                .then((id)=>{
-                    req.session.user = { id: id, username: req.body.username, first:req.body.firstName, last: req.body.lastName  };
-                    req.session.loggedIn = 'true';
-                    res.redirect('/profile');
-                }).catch((err) => {
-                    console.log(err);
-                    res.render('registerError', {
-                        layout: 'main',
-                    });
-                });
+app.post('/register', csrfSecurity, (req,res) => {
 
+    if (req.body.password && req.body.firstName && req.body.lastName, req.body.username) {
+        modules.hashPassword(req.body.password)
+            .then((hashedPassword) => {
+                modules.registerUser(req.body.firstName, req.body.lastName, req.body.username, hashedPassword)
+                    .then((id)=>{
+                        req.session.user = { id: id, username: req.body.username, first:req.body.firstName, last: req.body.lastName  };
+                        req.session.loggedIn = 'true';
+                        res.redirect('/profile');
+                    });
+            });
+    }
+    else{
+        res.render('registerError', {
+            layout: 'main',
         });
+    }
 });
 
 app.get('/profile',csrfSecurity, (req,res)=>{
@@ -105,6 +106,7 @@ app.post('/login',csrfSecurity, (req, res)=>{
                                     req.session.user = { first: result.first, last:result.last, id: result.id };
                                     modules.checkForSig(req.session.user.id).then((result)=>{
                                         req.session.user.signature = result;
+                                        req.session.user.signatureId = result.id;
                                         req.session.loggedIn = 'true';
                                         res.redirect('/petition');
                                     });
@@ -131,21 +133,23 @@ app.post('/login',csrfSecurity, (req, res)=>{
     }
 });
 
-app.get('/petition',csrfSecurity, function(req,res){//ERROR WHEN GETTING TO PETITION WITHOUT SIGNATURE, NO REDIRECT OR ERROR PAGE
-    if(req.session.user.signature && req.session.loggedIn){
-        console.log('yep, logged in and got a signature');
-        res.redirect('/petition/thanks');
+app.get('/petition',csrfSecurity, function(req,res){
+    //ERROR WHEN GETTING TO PETITION WITHOUT SIGNATURE, NO REDIRECT OR ERROR PAGE
+    
+    if(req.session.loggedIn){
+        if (req.session.user.signatureId) {
 
-    }
-    else if (req.session.loggedIn){
-        res.render('index',{
-            layout: 'mainWithLogOut',
-            dropBear:'/dropbearlogofinal.svg',
-            first: req.session.user.first,
-            last: req.session.user.last,
-            csrfToken: req.csrfToken()
-
-        });
+            res.redirect('/petition/thanks');
+        }
+        else{
+            res.render('index',{
+                layout: 'mainWithLogOut',
+                dropBear:'/dropbearlogofinal.svg',
+                first: req.session.user.first,
+                last: req.session.user.last,
+                csrfToken: req.csrfToken()
+            });
+        }
     }
     else{
         res.redirect('/register');
@@ -168,7 +172,7 @@ app.post('/petition', csrfSecurity, function(req,res){
             res.render('index', {
                 layout: 'mainWithLogOut',
                 dropBear:'/dropbearlogofinal.svg',
-                errorMessage:`There seems to be an issue. Did you remember to fill in all 3 fields?`,
+                errorMessage:`There seems to be an issue.`,
             });
         }
     });
@@ -177,31 +181,27 @@ app.post('/petition', csrfSecurity, function(req,res){
 
 app.get('/petition/thanks', csrfSecurity,function(req, res){//IF USER DIDNT SIGN OR UNSIGNED, REDIRECT TO PETITION!!!
     //CURRENTLY RETURNED TO THANKS WITHOUT SIGNATURE
+    if(req.session.user){
+        if(req.session.user.signatureId){
+            modules.getSign(req.session.user.id).then((signImg)=>{
+                res.render('thanksPage',{
+                    layout: 'mainWithLogOut',
+                    thanksMessage: 'All done.',
+                    thanksImage: '/thanksbear.png',
+                    toSignersBtn: 'Check out who else signed!',
+                    linkToSigners: "/petition/signers",
+                    signatureImg: signImg,
+                    csrfToken: req.csrfToken()
 
-    if(req.session.user.id){
-
-        modules.getSign(req.session.user.id).then((signImg)=>{
-            res.render('thanksPage',{
-                layout: 'mainWithLogOut',
-                thanksMessage: 'All done.',
-                thanksImage: '/thanksbear.png',
-                toSignersBtn: 'Check out who else signed!',
-                linkToSigners: "/petition/signers",
-                signatureImg: signImg,
-                csrfToken: req.csrfToken()
-
+                });
             });
-        });
+        }
+        else{
+            res.redirect('/petition');
+        }
     }
     else{
-        res.render('thanksPage',{
-            layout: 'mainWithLogOut',
-            thanksMessage: 'All done.',
-            thanksImage: '/thanksbear.png',
-            toSignersBtn: 'Check out who else signed!',
-            linkToSigners: "/petition/signers",
-            csrfToken: req.csrfToken()
-        });
+        res.redirect('/register');
     }
 });
 
@@ -212,7 +212,7 @@ app.post('/petition/removeSig', function(req,res){//SHOULD ADD CSRF MIDDLEWARE??
 
 app.get('/petition/signers', function(req,res){
     modules.getNames().then((value)=>{
-        console.log(value);
+
         res.render('signers', {
             layout: 'mainWithLogOut',
             headlineSigners:'These people have already signed: ',
@@ -255,7 +255,7 @@ app.get('/profile/edit', csrfSecurity, function(req,res) {
 
 app.post('/profile/edit', csrfSecurity, function(req, res){
     if (req.body.password != ''){
-        console.log('here is the if block');
+
         modules.updatePassword(req.body.password, req.session.user.id);
     }
     modules.updateDetails(req.body.first, req.body.last, req.body.email,  req.session.user.id, req.body.age, req.body.city, req.body.homepage);
@@ -266,5 +266,12 @@ app.get('/logout', function(req,res){
     req.session = null;
     res.redirect('/register');
 });
+
+app.get('/about',(req,res)=>{
+    res.render('aboutDropBear', {
+        layout:'main',
+    });
+});
+
 
 app.listen(process.env.PORT || 8080, ()=> (console.log('listening on port 8080')));
