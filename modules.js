@@ -1,4 +1,4 @@
-var userInfo = require('./secrets.json');
+// var userInfo = require('./secrets.json');
 var spicedPg = require('spiced-pg');
 var bcrypt = require('bcryptjs');
 var db;
@@ -7,7 +7,7 @@ if (process.env.DATABASE_URL){
     db = process.env.DATABASE_URL;
 }
 else{
-    userInfo = require('./secrets.json');
+    var userInfo = require('./secrets.json');
     var user = userInfo.username;
     var pass = userInfo.password;
     db = `postgres:${user}:${pass}psql@localhost:5432/petition`;
