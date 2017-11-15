@@ -1,18 +1,18 @@
-// var userInfo = require('./secrets.json');
 var spicedPg = require('spiced-pg');
 var bcrypt = require('bcryptjs');
-var db;
+var dbUrl;
 
 if (process.env.DATABASE_URL){
-    db = process.env.DATABASE_URL;
+    dbUrl = process.env.DATABASE_URL;
 }
 else{
     var userInfo = require('./secrets.json');
     var user = userInfo.username;
     var pass = userInfo.password;
-    db = `postgres:${user}:${pass}psql@localhost:5432/petition`;
+    dbUrl = `postgres:${user}:${pass}psql@localhost:5432/petition`;
 }
 // var db = spicedPg(process.env.DATABASE_URL ||`postgres:${user}:${pass}psql@localhost:5432/petition`);//CHECK IF WORKING
+var db = spicedPg(dbUrl);
 
 exports.signPetition = function(first, last, signature, userId) {
     return db.query(
