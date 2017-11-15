@@ -6,7 +6,7 @@ body{
     align-items: center;
     text-align: center;
     font-family: "PT sans";
-    background-color: white
+    background-color: #FBFBFB
 
 }
 
@@ -24,11 +24,17 @@ input{
     height: 4vh;
 }
 
-#logOutBtn{
-    visibility:visible;
+.logOutBtn{
     text-decoration: none;
-    text-align: center;
-    font-size: 15px;
+    text-align: initial;
+    width: 43px;
+    font-size: 12px;
+    border: 1px solid black;
+    border-radius: 25px;
+    padding: 4px;
+    background-color: black;
+    color: white;
+    align-self: baseline;
 }
 
 #sideLogoSmall{
@@ -38,13 +44,13 @@ input{
 }
 
 #dropBearLogo{
-    width: 80%;
+    width: 70%;
     height: 80%
 }
 
 .names{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
 }
 
 .nameInp{
@@ -65,6 +71,7 @@ input{
 #signImg{
     border: 1px dashed black;
     margin: 5px;
+    width: fit-content;
 }
 
 #canvas{

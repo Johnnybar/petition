@@ -32,6 +32,12 @@ signature text NOT NULL,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 
+//
+
+
+
+
+
 when the data is successfully redirected with the post req.
 
 3. Thank you page for after signing the petition
@@ -82,3 +88,89 @@ when running the checkpass function, to get the 'hashedpasswordfromdb', run a se
 where email = ...
 
 checkpassword will also resolve a boolean value. if(doesMatch) - then redirect to ....
+
+//INNER JOIN
+//LEFT RIGHT OR FULL JOINS ARE OUTER JOINS
+
+when user logs in:
+select users.first, users.last, users.pass, users.id, signatures.id as signatureId
+FROM USERS
+left join signatures
+on users.id = signatures.user_id
+
+
+app.get('/signers/:city', function(req, res){
+
+})
+
+in postgres lower function to make case insensitive:
+SELECT ID
+FROM groups
+WHERE LOWER(name) = LOWER('Administrator')
+
+//
+
+On edit profile page we need a select query with a join clause
+then populate with res.render
+
+app.get('/edit-profile', (req, res)=>{
+const q='select all the stuff'
+const params =[]
+
+exports.getStuff = function ()
+db.query(q, params)
+    .then(()=>{
+        console.log(results.rows[0])
+    })
+})
+
+
+check if the user has a row in user_profiles. if there isn't, do an insert. if there is, do an update.
+OR- add insert to profile page after register, even if users didn't add any info(to add a row for them in user_profiles).
+
+if users update password, run through the hash thing and update it.
+
+use a delete query to delete the row with the signature in it, if the user wants to unsign.
+(DELETE FROM table WHERE user_id = thatId)
+
+UPDATE table
+
+SET column first = newnamevalue
+SET column city = newcityvalue
+
+WHERE condition
+
+on psql run \dt to see a list of all tables
+        run \du to see users on our machine
+
+
+////////
+&lt;script src=&quot; - place outside user input to disallow malicious attacks trying to
+inject scripts in your site
+handlebars, react and angular do that automatically
+
+{{{body}}} (triple curly) in handlebars tells the computer not to escape it
+
+To prevent clickjacking using express:
+
+app.use(function(req,res, next){
+res.setHeader('x-frame-options', 'deny');
+next();
+})
+
+helmetjs -  library for express with security modules
+to prevent???- by helmetjs
+app.disable('x-powered-by');
+
+
+never send the error object back, cause it may contain vulnerabilities a hacker can exploit.
+Send an error message that you created to the user.
+
+after app.use csrsurf, add 'csrfToken' to the res.render of the get request with the secret pass
+ you choose
+
+add another input type hidden and name it '_csrf' and put the token in it as
+a value='{{csrfToken}}'
+
+
+to delete button, make it a form with post method and a hidden input type

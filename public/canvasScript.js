@@ -16,5 +16,5 @@ canvas.on('mousedown', function() {
     canvas.off('.event');
     // canvas[0].toDataURL("image/png");
     var img = document.getElementById('canvas').toDataURL();
-    $("input:hidden").val(img);
+    $("input[name=signature]").val(img);
 });

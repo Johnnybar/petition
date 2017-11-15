@@ -1,0 +1,23 @@
+<h1>Edit your profile </h1>
+<form method="post">
+
+
+    <p>First Name</p>
+    <input type="text" name="first" value={{first}}>
+    <p>Last Name</p>
+    <input type="text" name="last" value={{last}}>
+    <p>Email Address</p>
+    <input type="text" name="email" value={{email}}>
+    <p>Password</p>
+    <input type="password" name="password" value=''>
+    <p>Age</p>
+    <input type="text" name="age" value={{age}}>
+    <p>City</p>
+    <input type="text" name="city" value={{city}}>
+    <p>Homepage</p>
+    <input type="text" name="homepage" value={{homepage}}>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <br>
+    <br>
+    <button type="submit">UPDATE</button>
+</form>

@@ -1,7 +1,7 @@
 <h1>{{headlineSigners}}</h1>
 <ul>
 {{#each names}}
-    <li>{{first}}{{last}}</li>
+    <li><a href="{{user_url}}">{{first}} {{last}}</a>, {{user_age}}, <a href="/signers/{{user_city}}">{{user_city}}</a></li>
 {{/each}}
 
 </ul>

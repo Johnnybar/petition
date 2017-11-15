@@ -6,8 +6,12 @@ const cookieParser = require('cookie-parser');
 var spicedPg = require('spiced-pg');
 const modules = require('./modules.js');
 const cookieSession = require('cookie-session');
+var csrf = require('csurf');
+const csrfSecurity = csrf();
 
-////MAKE A LOGOUT PAGE AND REMOVE INPUT ON PETITION SIGN PAGE!!!
+//NEED TO SEE HOW TO CONNECT TABLES TO ALLOW USER WHO LOGGED IN TO SEE HIS SIGNATURE
+
+app.use(cookieParser());
 
 app.use(cookieSession({
     secret: 'a really hard to guess secret',
@@ -22,68 +26,95 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 
+// app.use(csurf());
+
 //FIRST PAGE WHEN OPENING LOCAL HOST
 app.get('/', (req,res) => {
     if(req.session.loggedIn) {
-        res.redirect('/thanks');
+        res.redirect('/petition');
     } else {
         res.redirect('/register');
     }
 });
 
-app.get('/register', (req, res)=>{
+app.get('/register',csrfSecurity, (req, res)=>{
     if(req.session.loggedIn){
         res.redirect('/petition');
     }
     else{
         res.render('register', {
             layout: 'main',
+            csrfToken: req.csrfToken()
+
         });
     }
 });
 //AFTER USERS CLICKED REGISTER
-app.post('/register', (req,res) => {
+app.post('/register',csrfSecurity, (req,res) => {
     modules.hashPassword(req.body.password)
         .then((hashedPassword) => {
-            console.log("USER'S HASH is ", hashedPassword);
             modules.registerUser(req.body.firstName, req.body.lastName, req.body.username, hashedPassword)
                 .then((id)=>{
-                    console.log(id);
+                    req.session.user = { id: id, username: req.body.username, first:req.body.firstName, last: req.body.lastName  };
+                    req.session.loggedIn = 'true';
+                    res.redirect('/profile');
+                }).catch((err) => {
+                    console.log(err);
+                    res.render('registerError', {
+                        layout: 'main',
+                    });
                 });
-            req.session.user = { username: req.body.username, first:req.body.firstName, last: req.body.firstName  };
-            if(req.session.signatureId){
-                req.session.user = {signatureId: req.session.user.singatureId};
-            }
-            req.session.loggedIn = 'true';
-            res.redirect('/petition');
+
         });
 });
 
-app.get('/login', (req,res)=>{
+app.get('/profile',csrfSecurity, (req,res)=>{
+    res.render('profile', {
+        layout:'main',
+        csrfToken: req.csrfToken()
+    });
+});
+
+app.post('/profile',csrfSecurity, (req,res)=>{
+    modules.addAgeCityUrl(req.body.age, req.body.city, req.body.homepage, req.session.user.id);
+    res.redirect('/petition');
+});
+
+app.get('/login',csrfSecurity, (req,res)=>{
     if(req.session.loggedIn){
         res.redirect('/petition');
     }
     else{
         res.render('login', {
             layout:'main',
+            csrfToken: req.csrfToken()
         });
     }
 });
 
-app.post('/login', (req, res)=>{
+app.post('/login',csrfSecurity, (req, res)=>{
     if(req.body.username && req.body.password){
         modules.getHash(req.body.username)
             .then((hashPass)=>{
                 modules.checkPassword(req.body.password, hashPass)
                     .then((doesMatch) => {
-                        console.log("doesMatch", doesMatch);
+                        console.log("does match ", doesMatch);
                         if(doesMatch){
-                            req.session.loggedIn = 'true';
-                            
-                            //ADD QUERY TO GET SIGNATURE ID
-                            res.redirect('/petition');
+                            modules.getUserInp(req.body.username)
+                                .then((result)=>{
+                                    req.session.user = { first: result.first, last:result.last, id: result.id };
+                                    modules.checkForSig(req.session.user.id).then((result)=>{
+                                        req.session.user.signature = result;
+                                        req.session.loggedIn = 'true';
+                                        res.redirect('/petition');
+                                    });
+
+                                });
                         } else {
                             console.log("that password did not match");
+                            res.render('loginError', {
+                                layout: 'main',
+                            });
                         }
                     }).catch((err) => {
                         console.log(err);
@@ -100,37 +131,37 @@ app.post('/login', (req, res)=>{
     }
 });
 
-app.get('/petition', function(req,res){
-
-
-    if(req.session.signatureId && req.session.loggedIn){
-
-        //add module that takes the signature ID and matches it
+app.get('/petition',csrfSecurity, function(req,res){//ERROR WHEN GETTING TO PETITION WITHOUT SIGNATURE, NO REDIRECT OR ERROR PAGE
+    if(req.session.user.signature && req.session.loggedIn){
         console.log('yep, logged in and got a signature');
-        modules.getSign(req.session.signatureId).then((signImg)=>{
-            res.redirect('/petition/thanks');//NOT WORKING!!!
+        res.redirect('/petition/thanks');
+
+    }
+    else if (req.session.loggedIn){
+        res.render('index',{
+            layout: 'mainWithLogOut',
+            dropBear:'/dropbearlogofinal.svg',
+            first: req.session.user.first,
+            last: req.session.user.last,
+            csrfToken: req.csrfToken()
+
         });
     }
     else{
-        if(req.session.loggedIn){
-            res.render('index',{
-                layout: 'mainWithLogOut',
-                dropBear:'/dropbearlogofinal.svg',
-            });
-        }
-        else{
-            res.redirect('/register');
-        }
+        res.redirect('/register');
     }
+
 });
 
-app.post('/petition', function(req,res){
-    let firstName = req.body.first;
-    let lastName = req.body.last;
+app.post('/petition', csrfSecurity, function(req,res){
+    let firstName = req.session.user.first;
+    let lastName = req.session.user.last;
     let signature = req.body.signature;
-    modules.signPetition(firstName, lastName, signature).then((id)=>{
-        if(firstName && lastName && signature){
-            req.session.signatureId = id;
+    let userId = req.session.user.id;
+
+    modules.signPetition(firstName, lastName, signature, userId).then((signatureId)=>{
+        if(signatureId){
+            req.session.user.signatureId = signatureId;
             res.redirect('/petition/thanks');
         }
         else{
@@ -144,16 +175,21 @@ app.post('/petition', function(req,res){
 });
 
 
-app.get('/petition/thanks', function(req, res){
-    if(req.session.signatureId){
-        modules.getSign(req.session.signatureId).then((signImg)=>{
+app.get('/petition/thanks', csrfSecurity,function(req, res){//IF USER DIDNT SIGN OR UNSIGNED, REDIRECT TO PETITION!!!
+    //CURRENTLY RETURNED TO THANKS WITHOUT SIGNATURE
+
+    if(req.session.user.id){
+
+        modules.getSign(req.session.user.id).then((signImg)=>{
             res.render('thanksPage',{
                 layout: 'mainWithLogOut',
                 thanksMessage: 'All done.',
                 thanksImage: '/thanksbear.png',
                 toSignersBtn: 'Check out who else signed!',
                 linkToSigners: "/petition/signers",
-                signatureImg: signImg
+                signatureImg: signImg,
+                csrfToken: req.csrfToken()
+
             });
         });
     }
@@ -164,19 +200,66 @@ app.get('/petition/thanks', function(req, res){
             thanksImage: '/thanksbear.png',
             toSignersBtn: 'Check out who else signed!',
             linkToSigners: "/petition/signers",
+            csrfToken: req.csrfToken()
         });
     }
 });
 
+app.post('/petition/removeSig', function(req,res){//SHOULD ADD CSRF MIDDLEWARE??
+    modules.removeSig(req.session.user.id);
+    res.redirect('/petition');
+});
+
 app.get('/petition/signers', function(req,res){
-    var records = modules.getSigners();
-    records.then((value)=>{
-        res.render('signers',{
-            layout:'mainWithLogOut',
+    modules.getNames().then((value)=>{
+        console.log(value);
+        res.render('signers', {
+            layout: 'mainWithLogOut',
             headlineSigners:'These people have already signed: ',
-            names: value
+            names: value,
         });
     });
+
+    app.get('/signers/:signerCity', function(req,res){
+        const signerCity = req.params.signerCity;
+        modules.getCity(signerCity).then((value)=>{
+            res.render('city', {
+                layout:'mainWithLogOut',
+                headline: `Other people who joined our cause in ${signerCity}`,
+                names: value,
+            });
+        });
+    });
+});
+
+app.get('/profile/edit', csrfSecurity, function(req,res) {
+    if (req.session.loggedIn) {
+        modules.getDetails(req.session.user.id).then((value)=>{
+
+            res.render('editProfile', {
+                layout:'mainWithLogOut',
+                first: value.first,
+                last: value.last,
+                email: value.username,
+                age: value.user_age,
+                city: value.user_city,
+                homepage: value.user_url,
+                csrfToken: req.csrfToken()
+            });
+        });
+    }
+    else{
+        res.redirect('/register');
+    }
+});
+
+app.post('/profile/edit', csrfSecurity, function(req, res){
+    if (req.body.password != ''){
+        console.log('here is the if block');
+        modules.updatePassword(req.body.password, req.session.user.id);
+    }
+    modules.updateDetails(req.body.first, req.body.last, req.body.email,  req.session.user.id, req.body.age, req.body.city, req.body.homepage);
+    res.redirect('/profile/edit');
 });
 
 app.get('/logout', function(req,res){

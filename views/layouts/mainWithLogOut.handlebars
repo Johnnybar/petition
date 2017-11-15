@@ -6,7 +6,10 @@
         <link rel="stylesheet" href="/stylesheet.css">
     </head>
     <body>
-        <a href="/logout" id= "logOutBtn">Log Out</a>
+        <div id="loggedInNav">
+            <a href="/logout" class= "logOutBtn">Log Out</a>
+            <a href="/profile/edit" class= "logOutBtn">Edit Profile</a>
+        </div>
         {{>nav}}
         <header>
         <h2 id = 'petitionTitle'>Save the Drop Bear</h2>

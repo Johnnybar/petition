@@ -7,12 +7,10 @@
     <form method='POST'>
 
             <div class="names">
-                <h4>First Name</h4>
-                <h4>Last Name</h4>
+                <h4>{{first}}</h4>
+                <h4>{{last}}</h4>
             </div>
             <div class="nameInp">
-                <input type="text" name="first"></input>
-                <input type="text" name="last"></input>
                 <input type="hidden" name="signature"></input>
             </div>
         <br>
@@ -21,6 +19,7 @@
         <canvas id="canvas" width="300" height="100" name="canvas"></canvas>
         <br>
         <button type="submit">Submit</button>
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
     </form>
 
 
