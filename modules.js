@@ -1,21 +1,18 @@
 var userInfo = require('./secrets.json');
-var user = userInfo.username;
-var pass = userInfo.password;
 var spicedPg = require('spiced-pg');
 var bcrypt = require('bcryptjs');
+var db;
 
-var db = spicedPg(`postgres:${user}:${pass}psql@localhost:5432/petition`);
-
-// exports.connectUserId = function(id, first, last, signature){
-//     db.query (
-//         'INSERT INTO signatures (user_id, first, last, signature) VALUES ($1, $2, $3, $4)',
-//         [id, first, last, signature]
-//     ).then((results)=>{
-//         return results;
-//     }).catch((err)=>{
-//         console.log(err);
-//     });
-// };
+if (process.env.DATABASE_URL){
+    db = process.env.DATABASE_URL;
+}
+else{
+    userInfo = require('./secrets.json');
+    var user = userInfo.username;
+    var pass = userInfo.password;
+    db = `postgres:${user}:${pass}psql@localhost:5432/petition`;
+}
+// var db = spicedPg(process.env.DATABASE_URL ||`postgres:${user}:${pass}psql@localhost:5432/petition`);//CHECK IF WORKING
 
 exports.signPetition = function(first, last, signature, userId) {
     return db.query(
@@ -27,8 +24,6 @@ exports.signPetition = function(first, last, signature, userId) {
         console.log(err);
     });
 };
-
-
 
 exports.getSigners = function(){
     return db.query(

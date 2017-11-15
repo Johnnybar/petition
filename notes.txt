@@ -166,7 +166,7 @@ app.disable('x-powered-by');
 never send the error object back, cause it may contain vulnerabilities a hacker can exploit.
 Send an error message that you created to the user.
 
-after app.use csrsurf, add 'csrfToken' to the res.render of the get request with the secret pass
+after app.use crsurf, add 'csrfToken' to the res.render of the get request with the secret pass
  you choose
 
 add another input type hidden and name it '_csrf' and put the token in it as
@@ -174,3 +174,9 @@ a value='{{csrfToken}}'
 
 
 to delete button, make it a form with post method and a hidden input type
+//
+npm start is an alternate way to run server
+
+heroku commands
+heroku run bash - use cli commands on heroku like ls
+heroku logs - check all logs

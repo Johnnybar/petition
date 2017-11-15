@@ -27,4 +27,4 @@ CREATE TABLE user_profiles(
     age INTEGER,
     city VARCHAR(200),
     url text
-)
+);
