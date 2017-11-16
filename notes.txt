@@ -180,3 +180,72 @@ npm start is an alternate way to run server
 heroku commands
 heroku run bash - use cli commands on heroku like ls
 heroku logs - check all logs
+
+///Check tobi's app.use csrftoken use
+
+ttl = time to live (before invalidating stale cache)
+
+//run redis with
+
+redis -server --daemonize yes
+then node cache.js//name of the file
+
+const redis = require('redis');
+
+var client = redis.createClient({
+    host:'localhost',
+    port:6379
+});
+
+client.on('error', function(err){
+console.log(err)
+})
+
+client.set('key', 'value', function(e, data){
+    console.log(err,data)// null 'ok'
+})
+
+then:
+client.get('key', function(e, data){
+    console.log(err,data)// returns null 'value'
+})
+
+client.setex('key', 20, 'value', function(e, data){
+    console.log(err,data)// set a key and give it a ttl of 20 seconds
+})
+
+exports.get = function(key){
+    return new Promise (function(resolve, reject){
+        client.get(key, function(err, data){
+            if (err){
+                reject(err);
+            } else {
+                resolve(data); //use JSON.parse(data) for instance, if every data coming in is a json
+            }
+        })
+    })
+}
+
+exports.setex = function(key){
+    return new Promise (function(resolve, reject){
+        client.setex(key, expiry, JSON.stringify(val), function(err, data){
+            if (err){
+                reject(err);
+            } else {
+                resolve(JSON.parse(data));
+            }
+        })
+    })
+}
+
+writing redish -cli in the terminal allows you to run all above commands in the terminal
+
+keys * //shows all values
+
+set key value //setting a key value pair
+
+setex name 10 leonardo// give the key value 10 seconds to exist
+get name 'leonardo'// will be gona after 10 seconds
+del key //to invalidate smtg in the cache
+
+a cache 'miss' will result in nil and it means it's not in there

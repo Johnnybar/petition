@@ -194,8 +194,6 @@ exports.removeSig = function(user){
 };
 
 
-
-
 exports.updateDetails = function(first, last, username, user_id, age, city, url ){
     return new Promise(function(resolve, reject) {
         db.query(`

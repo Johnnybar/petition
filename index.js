@@ -5,14 +5,15 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 var spicedPg = require('spiced-pg');
 const modules = require('./modules.js');
+const redisModules = require('./redisModules.js');
 const cookieSession = require('cookie-session');
 var csrf = require('csurf');
 const csrfSecurity = csrf();
+const redis = require('redis');
 
 //NEED TO SEE HOW TO CONNECT TABLES TO ALLOW USER WHO LOGGED IN TO SEE HIS SIGNATURE
 
 app.use(cookieParser());
-
 app.use(cookieSession({
     secret: 'a really hard to guess secret',
     maxAge: 1000 * 60 * 60 * 24 * 14
@@ -20,13 +21,20 @@ app.use(cookieSession({
 
 app.engine('handlebars', hb());
 app.set('view engine', 'handlebars');
-
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 
-// app.use(csurf());
+
+var client = redis.createClient({
+    host: 'localhost',
+    port: 6379
+});
+
+client.on('error', function(err) {
+    console.log(err);
+});
 
 //FIRST PAGE WHEN OPENING LOCAL HOST
 app.get('/', (req,res) => {
@@ -50,14 +58,15 @@ app.get('/register', csrfSecurity, (req, res)=>{
 });
 //AFTER USERS CLICKED REGISTER
 app.post('/register', csrfSecurity, (req,res) => {
-
     if (req.body.password && req.body.firstName && req.body.lastName, req.body.username) {
         modules.hashPassword(req.body.password)
             .then((hashedPassword) => {
                 modules.registerUser(req.body.firstName, req.body.lastName, req.body.username, hashedPassword)
+                //redisModules.setCache()
                     .then((id)=>{
                         req.session.user = { id: id, username: req.body.username, first:req.body.firstName, last: req.body.lastName  };
                         req.session.loggedIn = 'true';
+                        redisModules.delCache('signers');
                         res.redirect('/profile');
                     });
             });
@@ -78,8 +87,10 @@ app.get('/profile',csrfSecurity, (req,res)=>{
 
 app.post('/profile',csrfSecurity, (req,res)=>{
     modules.addAgeCityUrl(req.body.age, req.body.city, req.body.homepage, req.session.user.id);
+    redisModules.delCache('signers');
     res.redirect('/petition');
 });
+
 
 app.get('/login',csrfSecurity, (req,res)=>{
     if(req.session.loggedIn){
@@ -135,7 +146,7 @@ app.post('/login',csrfSecurity, (req, res)=>{
 
 app.get('/petition',csrfSecurity, function(req,res){
     //ERROR WHEN GETTING TO PETITION WITHOUT SIGNATURE, NO REDIRECT OR ERROR PAGE
-    
+
     if(req.session.loggedIn){
         if (req.session.user.signatureId) {
 
@@ -166,6 +177,7 @@ app.post('/petition', csrfSecurity, function(req,res){
     modules.signPetition(firstName, lastName, signature, userId).then((signatureId)=>{
         if(signatureId){
             req.session.user.signatureId = signatureId;
+            redisModules.delCache('signers');
             res.redirect('/petition/thanks');
         }
         else{
@@ -207,30 +219,58 @@ app.get('/petition/thanks', csrfSecurity,function(req, res){//IF USER DIDNT SIGN
 
 app.post('/petition/removeSig', function(req,res){//SHOULD ADD CSRF MIDDLEWARE??
     modules.removeSig(req.session.user.id);
+    redisModules.delCache('signers');
     res.redirect('/petition');
 });
 
 app.get('/petition/signers', function(req,res){
-    modules.getNames().then((value)=>{
+// REDIS IS HERE
+    redisModules.chkIfCached('signers')//'signers' is a key and its value is an array
+        .then(function(signers){
+            if(!signers){
+                modules.getNames().then(function(resultSigners){
+                    redisModules.setCache('signers', JSON.stringify(resultSigners));
+                    signers = resultSigners;
+                    res.render('signers', {
+                        layout: 'mainWithLogOut',
+                        headlineSigners:'These people have already signed: ',
+                        names: signers,
+                    });
+                });
+            }
+            else {
+                signers = JSON.parse(signers);
+                res.render('signers', {
+                    layout: 'mainWithLogOut',
+                    headlineSigners:'These people have already signed: ',
+                    names: signers,
+                });
+            }
+        });
+});
 
-        res.render('signers', {
-            layout: 'mainWithLogOut',
-            headlineSigners:'These people have already signed: ',
+// ORIGINAL:
+// app.get('/petition/signers', function(req,res){
+// modules.getNames().then((value)=>{
+//
+//     res.render('signers', {
+//         layout: 'mainWithLogOut',
+//         headlineSigners:'These people have already signed: ',
+//         names: value,
+//     });
+// });
+
+app.get('/signers/:signerCity', function(req,res){
+    const signerCity = req.params.signerCity;
+    modules.getCity(signerCity).then((value)=>{
+        res.render('city', {
+            layout:'mainWithLogOut',
+            headline: `Other people who joined our cause in ${signerCity}`,
             names: value,
         });
     });
-
-    app.get('/signers/:signerCity', function(req,res){
-        const signerCity = req.params.signerCity;
-        modules.getCity(signerCity).then((value)=>{
-            res.render('city', {
-                layout:'mainWithLogOut',
-                headline: `Other people who joined our cause in ${signerCity}`,
-                names: value,
-            });
-        });
-    });
 });
+
 
 app.get('/profile/edit', csrfSecurity, function(req,res) {
     if (req.session.loggedIn) {
@@ -253,12 +293,14 @@ app.get('/profile/edit', csrfSecurity, function(req,res) {
     }
 });
 
+
 app.post('/profile/edit', csrfSecurity, function(req, res){
     if (req.body.password != ''){
 
         modules.updatePassword(req.body.password, req.session.user.id);
     }
     modules.updateDetails(req.body.first, req.body.last, req.body.email,  req.session.user.id, req.body.age, req.body.city, req.body.homepage);
+    redisModules.delCache('signers');
     res.redirect('/profile/edit');
 });
 
