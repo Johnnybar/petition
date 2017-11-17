@@ -1,4 +1,67 @@
+@-webkit-keyframes downBar  {
+    0% {
+      transform:translateY(-40px);
+    }
+    50%{
+        transform: translateY(-20deg);
+    }
+    100% {
+      transform: translateY(-5px);
+    }
+}
 
+@-webkit-keyframes biggen  {
+    0% {
+      transform:scale(1,1);
+    }
+    50%{
+        transform: scale(1.2,1.2);
+    }
+    100% {
+      transform: scale(1,1);
+    }
+}
+
+@-webkit-keyframes quickRotate  {
+    0% {
+      transform: rotate(-20deg);
+    }
+    50%{
+        transform: rotate(20deg);
+    }
+    100% {
+      transform: rotate(-20deg);
+    }
+}
+
+
+@-webkit-keyframes lightUp  {
+    0%  {
+      background-color: white;
+    }
+
+    100%{
+        background-color: #c5f2c1;
+    }
+
+}
+
+@-webkit-keyframes bringOpacUp  {
+    0%  {
+      opacity: 0.1;
+    }
+
+    100%{
+        opacity: 0.9;
+    }
+}
+
+#mainBody{
+    background-image: url('/possiblebg.gif');
+    animation: bringOpacUp 1s ease-out;
+     background-size: 100%;
+     margin: 0px
+}
 
 body{
     display: flex;
@@ -6,36 +69,45 @@ body{
     align-items: center;
     text-align: center;
     font-family: "PT sans";
-    background-color: #FBFBFB
+    background-color: #FBFBFB;
+    margin: 0px
 
+}
+
+#body-cover{
+    width: 100vw;
+    background-color: white;
+    margin: 0px;
+    opacity: 0.7;
+    top:0;
+    left: 0;
+}
+
+#body-cover2{
+    width: 100vw;
+    height:100vh;
+    background-color: white;
+    background-repeat: repeat;
+    margin: 0px;
+    opacity: 0.7;
+    top:0;
+    left: 0;
 }
 
 header{
     display: flex;
+    align-self:flex-start;
+    margin-top: -10px;
+}
+
+.saveDropBear{
+    margin-top: 20px;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
 }
 
-a{
-    text-decoration: none;
-}
-input{
-    width: 12vw;
-    height: 4vh;
-}
 
-.logOutBtn{
-    text-decoration: none;
-    text-align: initial;
-    width: 43px;
-    font-size: 12px;
-    border: 1px solid black;
-    border-radius: 25px;
-    padding: 4px;
-    background-color: black;
-    color: white;
-    align-self: baseline;
-}
 
 #sideLogoSmall{
     width: 13%;
@@ -43,9 +115,120 @@ input{
     margin-left: 5px;
 }
 
+#sideLogoSmall:hover{
+    animation: biggen 1s ease-out infinite;
+}
+
+a{
+    text-decoration: none;
+}
+
+button{
+    cursor: pointer;
+    line-height: 14px;
+margin-top: 2px;
+}
+
+#alreadyHave:visited{
+    color:black;
+}
+
+input{
+    width: 12vw;
+    height: 4vh;
+}
+
+/*input:hover{
+    animation: grow 1s ease-in;
+}*/
+
+input:focus{
+    animation: lightUp 1s ease-out;
+    animation-fill-mode: forwards;
+    background-image: none;
+    outline: 0;
+    box-shadow: none;
+
+}
+
+input:active {
+  background-image: none;
+  outline: 0;
+ box-shadow: none;
+}
+
+#loggedInNav{
+    animation: downBar 0.5s ease-in;
+    animation-fill-mode: forwards;
+    position: fixed;
+    top: 20;
+    left: 5px;
+}
+
+#loggedOutNav{
+    animation: downBar 0.5s ease-in;
+    animation-fill-mode: forwards;
+    position: fixed;
+    left: 5px;
+
+}
+
+.logOutBtn{
+    text-decoration: none;
+    /*text-align: initial;*/
+    width: 43px;
+    font-size: 12px;
+    border: 1px solid black;
+    border-radius: 25px;
+    padding: 4px;
+    color: black;
+    align-self: baseline;
+    text-align: center;
+}
+
+.regLogBtn{
+
+border-radius: 15px;
+width: 100px;
+height: 30px;
+font-size: 15px;
+margin-top: 20px;
+margin-bottom: 5px;
+color: white;
+background-color: #aaa;
+text-shadow: 0px -1px 0px rgba(0,0,0,.5);
+
+}
+
+.regLogBtn:hover{
+    animation: biggen 2s ease-in-out infinite;
+}
+
+.regLogBtn2{
+
+border-radius: 15px;
+width: 100px;
+height: 30px;
+font-size: 10px;
+margin-bottom: 5px;
+color: white;
+background-color: #aaa;
+text-shadow: 0px -1px 0px rgba(0,0,0,.5);
+
+}
+.regLogBtn2:hover{
+    animation: biggen 2s ease-in-out infinite;
+}
+
 #dropBearLogo{
+
     width: 70%;
     height: 80%
+}
+
+#alreadyHave{
+    font-style: italic;
+    margin-top: 15px
 }
 
 .names{
@@ -64,7 +247,7 @@ input{
 }
 
 #thanksImg{
-    width: 30vw;
+
     height:40vh;
 }
 

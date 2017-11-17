@@ -249,3 +249,14 @@ get name 'leonardo'// will be gona after 10 seconds
 del key //to invalidate smtg in the cache
 
 a cache 'miss' will result in nil and it means it's not in there
+
+////
+press t in github to search through files
+EMPTY ARRAYS AND EMPTY OBJECTS ARE TRUTHY, SO TO CHECK FOR THEIR EXISTENCE,
+LOOK FOR LENGTH=0, DON'T USE IF(!)
+Mvc = model view controller
+
+
+
+HOW DO I UPLOAD THE NEW BRANCH TO HEROKU
+ERROR WHEN USER USING SAME DETAILS TO REGISTER

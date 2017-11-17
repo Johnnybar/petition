@@ -10,20 +10,35 @@ const cookieSession = require('cookie-session');
 var csrf = require('csurf');
 const csrfSecurity = csrf();
 const redis = require('redis');
+var session = require('express-session');
+var Store = require('connect-redis')(session);
+
+
 
 //NEED TO SEE HOW TO CONNECT TABLES TO ALLOW USER WHO LOGGED IN TO SEE HIS SIGNATURE
 
 app.use(cookieParser());
-app.use(cookieSession({
-    secret: 'a really hard to guess secret',
-    maxAge: 1000 * 60 * 60 * 24 * 14
-}));
+// app.use(cookieSession({
+//     secret: 'a really hard to guess secret',
+//     maxAge: 1000 * 60 * 60 * 24 * 14
+// }));
 
 app.engine('handlebars', hb());
 app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({
     extended: false
+}));
+
+app.use(session({
+    store: new Store({
+        ttl: 3600,
+        host: 'localhost',
+        port: 6379
+    }),
+    resave: false,
+    saveUninitialized: true,
+    secret: 'my super fun secret'
 }));
 
 
@@ -61,6 +76,7 @@ app.post('/register', csrfSecurity, (req,res) => {
     if (req.body.password && req.body.firstName && req.body.lastName, req.body.username) {
         modules.hashPassword(req.body.password)
             .then((hashedPassword) => {
+
                 modules.registerUser(req.body.firstName, req.body.lastName, req.body.username, hashedPassword)
                 //redisModules.setCache()
                     .then((id)=>{
@@ -68,12 +84,17 @@ app.post('/register', csrfSecurity, (req,res) => {
                         req.session.loggedIn = 'true';
                         redisModules.delCache('signers');
                         res.redirect('/profile');
+                    }).catch(function(){
+                        console.log('WE ARE DIFFERENTLY HERE');
+                        res.render('registerError', {
+                            layout: 'main'
+                        });
                     });
             });
     }
     else{
         res.render('registerError', {
-            layout: 'main',
+            layout: 'main'
         });
     }
 });
@@ -98,7 +119,7 @@ app.get('/login',csrfSecurity, (req,res)=>{
     }
     else{
         res.render('login', {
-            layout:'main',
+            layout:'mainLogin',
             csrfToken: req.csrfToken()
         });
     }
@@ -126,20 +147,20 @@ app.post('/login',csrfSecurity, (req, res)=>{
                         } else {
                             console.log("that password did not match");
                             res.render('loginError', {
-                                layout: 'main',
+                                layout: 'mainLogin',
                             });
                         }
                     }).catch((err) => {
                         console.log(err);
                         res.render('loginError', {
-                            layout: 'main',
+                            layout: 'mainLogin',
                         });
                     });
             });
     }
     else{
         res.render('LogDetailsMissing', {
-            layout:'main',
+            layout:'mainLogin',
         });
     }
 });
@@ -219,6 +240,7 @@ app.get('/petition/thanks', csrfSecurity,function(req, res){//IF USER DIDNT SIGN
 
 app.post('/petition/removeSig', function(req,res){//SHOULD ADD CSRF MIDDLEWARE??
     modules.removeSig(req.session.user.id);
+    req.session.user.signatureId= null;
     redisModules.delCache('signers');
     res.redirect('/petition');
 });
@@ -305,13 +327,13 @@ app.post('/profile/edit', csrfSecurity, function(req, res){
 });
 
 app.get('/logout', function(req,res){
-    req.session = null;
+    req.session.destroy();
     res.redirect('/register');
 });
 
 app.get('/about',(req,res)=>{
     res.render('aboutDropBear', {
-        layout:'main',
+        layout:'mainAbout',
     });
 });
 

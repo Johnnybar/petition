@@ -5,21 +5,27 @@
         <title>Petition</title>
         <link rel="stylesheet" href="/stylesheet.css">
     </head>
-    <body>
-        <div id="loggedOutNav">
-    <a href="/register" class= "logOutBtn">Back</a>
-    <a href="/About" class= "logOutBtn">About the Drop Bear</a>
-    </div>
+    <body id='mainBody'>
+    <section id="body-cover">
         {{>nav}}
         <header>
-        <h2 id = 'petitionTitle'>Save the Drop Bear</h2>
-        <img src="/dropbearlogofinal.svg" id='sideLogoSmall'>
+            <div id="loggedOutNav">
+        <button onclick="goBack()" class= "logOutBtn">Back</button>
+        <a href="/about" class= "logOutBtn">About the Drop Bear</a>
+        </div>
         </header>
+        <div class="saveDropBear">
+            <h3 id = 'petitionTitle'>Save the Drop Bear</h3>
+            <img src="/dropbearlogofinal.svg" id='sideLogoSmall'>
+        </div>
 
         {{{ body }}}
 
         {{>footer}}
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script src = '/canvasScript.js' charset="utf-8" type='text/javascript'></script>
+        <script type="text/javascript">function goBack() {    window.history.back()}</script>
+</section>
     </body>
 </html>

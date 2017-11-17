@@ -10,12 +10,12 @@
 </div> -->
 
 <h1>{{thanksMessage}}</h1>
-<img src={{thanksImage}} id='thanksImg' />
+<img src="https://media.giphy.com/media/3o6fIVu9118ICJHft6/giphy.gif" id='thanksImg' />
 <img src={{signatureImg}} id = 'signImg' / />
-<a href={{linkToSigners}}><button type="button" name="button" id='toSignersBtn'>{{toSignersBtn}}</button></a>
+<a href={{linkToSigners}}><button type="button" name="button" class='regLogBtn2'>{{toSignersBtn}}</button></a>
 
 <form action = "/petition/removeSig" method="post">
-    <button type="submit" name="button">Remove your signature</button>
+    <button type="submit" name="button" class='regLogBtn2'>Remove your signature</button>
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
 </form>

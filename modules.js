@@ -73,17 +73,12 @@ exports.checkPassword = function(textEnteredInLoginForm, hashedPasswordFromDatab
 
 
 exports.registerUser =function(first, last, username, hashPass) {
-    return new Promise(function(resolve, reject){
-        db.query(
-            'INSERT INTO users (first, last, username, hash_pass) VALUES ($1, $2, $3, $4) RETURNING id',
-            [first, last, username, hashPass]
-        ).then((results) => {
-            resolve(results.rows[0].id);
-        }).catch((err) => {
-            console.log(err);
-        });
+    return db.query(
+        'INSERT INTO users (first, last, username, hash_pass) VALUES ($1, $2, $3, $4) RETURNING id',
+        [first, last, username, hashPass]
+    ).then((results) => {
+        return results.rows[0].id;
     });
-
 };
 
 
