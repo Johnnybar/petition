@@ -29,23 +29,30 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+app.use(cookieParser());
 
-app.use(session({
-    store: new Store({
-        ttl: 3600,
+const client = redis.createClient(process.env.REDIS_URL || {host:'localhost', port: 6379});
+
+var store = {};
+if(process.env.REDIS_URL){
+    store = {
+        url: process.env.REDIS_URL
+    };
+} else {
+    store = {
+        ttl: 3600, //time to live
         host: 'localhost',
         port: 6379
-    }),
-    resave: false,
+    };
+}
+app.use(session({
+    store: new Store(store),
+    resave: true,
     saveUninitialized: true,
-    secret: 'my super fun secret'
+    secret: 'mysecret'
 }));
 
 
-var client = redis.createClient({
-    host: 'localhost',
-    port: 6379
-});
 
 client.on('error', function(err) {
     console.log(err);
