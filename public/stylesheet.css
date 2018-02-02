@@ -62,13 +62,23 @@
      background-size: 100%;
      margin: 0px
 }
+@font-face {
+font-family: PT sans;
+src: url(/System/Library/Fonts/PTSans.ttc);
+  src: url(/System/Library/Fonts/PTSans.eot?#iefix) format('embedded-opentype');
+       url(/System/Library/Fonts/PTSans.woff2) format('woff2'); /* Super Modern Browsers */
+       url(/System/Library/Fonts/PTSans.woff) format('woff'); /* Pretty Modern Browsers */
+       url(/System/Library/Fonts/PTSans.ttf)  format('truetype'); /* Safari, Android, iOS */
+       url(/System/Library/Fonts/PTSans.svg#svgFontName) format('svg');
+}
+
 
 body{
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    font-family: "PT sans";
+    font-family: PT sans, sans-serif;
     background-color: #FBFBFB;
     margin: 0px
 
