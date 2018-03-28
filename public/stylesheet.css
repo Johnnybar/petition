@@ -86,6 +86,7 @@ body{
 
 #body-cover{
     width: 100vw;
+    height: 100vh;
     background-color: white;
     margin: 0px;
     opacity: 0.7;
