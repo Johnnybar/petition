@@ -59,8 +59,16 @@
 #mainBody{
     background-image: url('/possiblebg.gif');
     animation: bringOpacUp 1s ease-out;
-     background-size: 100%;
+    background-size: cover;
+
      margin: 0px
+}
+
+.regPage{
+    background-color: white;
+    opacity: 0.7;
+
+
 }
 @font-face {
 font-family: PT sans;
@@ -92,6 +100,7 @@ body{
     opacity: 0.7;
     top:0;
     left: 0;
+    background-size: cover;
 }
 
 #body-cover2{
