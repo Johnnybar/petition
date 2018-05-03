@@ -6,7 +6,7 @@ const cookieSession= require('cookie-session');
 
 app.use(cookieSession({
     secret: 'whatever',
-}));//ENTER MISSING
+}));
 
 
 function checkForUser(req,res,next){
@@ -43,8 +43,6 @@ app.post('/loginUser', (req,res)=>{
 
     var bcrypt = require('bcryptjs');
 
-
-    //HERE YOU WOULD DO A SELECET STATEMENT TO RETRIEVE HASH FROM DB
     checkPassword(req.body.password, result.rows[0].hashedPssword).then((doesMatch)=>{
         console.log('does match', doesMatch);
         if(doesMatch){
@@ -54,7 +52,6 @@ app.post('/loginUser', (req,res)=>{
             console.log('that password does not match');
         }
     });
-
 
     function checkPassword(textEnteredInLoginForm, hashedPasswordFromDatabase) {
         return new Promise(function(resolve, reject) {
@@ -68,7 +65,6 @@ app.post('/loginUser', (req,res)=>{
         });
     }
 });
-
 
 app.get('/features', checkForUser, (req, res)=>{
     res.sendFile( __dirname + '/public/features.html');
@@ -85,8 +81,6 @@ app.post('/submitRegistration', (req,res)=>{
                 username: req.body.username,
             };
         });
-
-    // THIS IS WHERE YOU WOULD INSERT INTO YOUR DB
 
     function hashPassword(plainTextPassword) {
         return new Promise(function(resolve, reject) {

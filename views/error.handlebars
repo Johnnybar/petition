@@ -1,30 +1,29 @@
 <div class="template">
-    <!-- MAKE SURE TO CHANGE ERROR TEMPLATE TO BE THE SAME!!! -->
-<a href="/logout">Log Out</a>
-<img src="{{dropBear}}" id ='dropBearLogo' >
+  <a href="/logout">Log Out</a>
+  <img src="{{dropBear}}" id='dropBearLogo'>
 
-<div id="dialog-form">
+  <div id="dialog-form">
     <form method='POST'>
-        <h3>{{errorMessage}}</h3>
-            <div class="names">
-                <h4>First Name</h4>
-                <h4>Last Name</h4>
-            </div>
-            <div class="nameInp">
-                <input type="text" name="first"></input>
-                <input type="text" name="last"></input>
-                <input type="hidden" name="signature"></input>
-            </div>
-        <br>
-        <h4>Your digital signature goes in here</h4>
-        <p>▼</p>
-        <canvas id="canvas" width="300" height="100" name="canvas"></canvas>
-        <br>
-        <button type="submit" class='regLogBtn'>Submit</button>
+      <h3>{{errorMessage}}</h3>
+      <div class="names">
+        <h4>First Name</h4>
+        <h4>Last Name</h4>
+      </div>
+      <div class="nameInp">
+        <input type="text" name="first"></input>
+        <input type="text" name="last"></input>
+        <input type="hidden" name="signature"></input>
+      </div>
+      <br>
+      <h4>Your digital signature goes in here</h4>
+      <p>▼</p>
+      <canvas id="canvas" width="300" height="100" name="canvas"></canvas>
+      <br>
+      <button type="submit" class='regLogBtn'>Submit</button>
     </form>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src='/canvasScript.js' charset="utf-8" type='text/javascript'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src='/canvasScript.js' charset="utf-8" type='text/javascript'></script>
 
-</div>
+  </div>

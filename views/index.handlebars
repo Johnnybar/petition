@@ -1,29 +1,28 @@
 <div class="template">
-    <!-- MAKE SURE TO CHANGE ERROR TEMPLATE TO BE THE SAME!!! -->
 
-<img src="{{dropBear}}" id ='dropBearLogo' >
+  <img src="{{dropBear}}" id='dropBearLogo'>
 
-<div id="dialog-form">
+  <div id="dialog-form">
     <form method='POST'>
 
-            <div class="names">
-                <h4>{{first}}</h4>
-                <h4>{{last}}</h4>
-            </div>
-            <div class="nameInp">
-                <input type="hidden" name="signature"></input>
-            </div>
-        <br>
-        <h4>Your digital signature goes in here</h4>
-        <p>▼</p>
-        <canvas id="canvas" width="300" height="100" name="canvas"></canvas>
-        <br>
-        <button type="submit" class='regLogBtn'>Submit</button>
-        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <div class="names">
+        <h4>{{first}}</h4>
+        <h4>{{last}}</h4>
+      </div>
+      <div class="nameInp">
+        <input type="hidden" name="signature"></input>
+      </div>
+      <br>
+      <h4>Your digital signature goes in here</h4>
+      <p>▼</p>
+      <canvas id="canvas" width="300" height="100" name="canvas"></canvas>
+      <br>
+      <button type="submit" class='regLogBtn'>Submit</button>
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
     </form>
 
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src='/canvasScript.js' charset="utf-8" type='text/javascript'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src='/canvasScript.js' charset="utf-8" type='text/javascript'></script>
 
-</div>
+  </div>

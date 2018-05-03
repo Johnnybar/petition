@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Petition</title>
-        <link rel="stylesheet" href="/stylesheet.css">
-    </head>
-    <body>
-        {{>nav}}
-        <header>
-            <div id="loggedInNav">
-                <a href="/logout" class= "logOutBtn">Log Out</a>
-                <a href="/profile/edit" class= "logOutBtn">Edit Profile</a>
-                <a href="/About" class= "logOutBtn">About the Drop Bear</a>
-                <button onclick="goBack()" class= "logOutBtn">Back</button>
-            </div>
-        </header>
-        <div class="saveDropBear">
-            <h3 id = 'petitionTitle'>Save the Drop Bear</h3>
-            <img src="/dropbearlogofinal.svg" id='sideLogoSmall'>
-        </div>
-        {{{ body }}}
-        {{>footer}}
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        <script src = '/canvasScript.js' charset="utf-8" type='text/javascript'></script>
-        <script type="text/javascript"> function goBack() {  window.history.back()}</script>
-    </body>
+
+<head>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Petition</title>
+  <link rel="stylesheet" href="/stylesheet.css">
+</head>
+
+<body>
+  {{>nav}}
+  <header>
+    <div id="loggedInNav">
+      <a href="/logout" class="logOutBtn">Log Out</a>
+      <a href="/profile/edit" class="logOutBtn">Edit Profile</a>
+      <a href="/About" class="logOutBtn">About the Drop Bear</a>
+      <button onclick="goBack()" class="logOutBtn">Back</button>
+    </div>
+  </header>
+  <div class="saveDropBear">
+    <h3 id='petitionTitle'>Save the Drop Bear</h3>
+    <img src="/dropbearlogofinal.svg" id='sideLogoSmall'>
+  </div>
+  {{{ body }}} {{>footer}}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src='/canvasScript.js' charset="utf-8" type='text/javascript'></script>
+  <script type="text/javascript">
+    function goBack() {
+      window.history.back()
+    }
+  </script>
+</body>
+
 </html>
