@@ -151,10 +151,6 @@ input {
   height: 4vh;
 }
 
-/*input:hover{
-    animation: grow 1s ease-in;
-}*/
-
 input:focus {
   animation: lightUp 1s ease-out;
   animation-fill-mode: forwards;
@@ -175,6 +171,8 @@ input:active {
   position: fixed;
   top: 20;
   left: 5px;
+  display: flex;
+  flex-direction: row;
 }
 
 #loggedOutNav {
@@ -182,11 +180,12 @@ input:active {
   animation-fill-mode: forwards;
   position: fixed;
   left: 5px;
+  display: flex;
+  flex-direction: row;
 }
 
 .logOutBtn {
   text-decoration: none;
-  /*text-align: initial;*/
   width: 43px;
   font-size: 12px;
   border: 1px solid black;
@@ -195,6 +194,7 @@ input:active {
   color: black;
   align-self: baseline;
   text-align: center;
+  margin-right: 5px;
 }
 
 .regLogBtn {
@@ -279,4 +279,24 @@ input:active {
 #dropBearCartoon {
   width: 300px;
   height: 300px;
+}
+
+@media only screen and (min-width: 1300px) {
+  * {
+    font-size: 110%
+  }
+  .logOutBtn {
+    width: 60px
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  * {
+    font-size: 100%;
+  }
+  input {
+    width: 34vw;
+  }
+}
+
 }
