@@ -281,12 +281,12 @@ input:active {
   height: 300px;
 }
 
-@media only screen and (min-width: 1300px) {
+@media only screen and (min-width: 1200px) {
   * {
     font-size: 110%
   }
   .logOutBtn {
-    width: 60px
+    width: 70px
   }
 }
 
@@ -295,7 +295,7 @@ input:active {
     font-size: 100%;
   }
   input {
-    width: 34vw;
+    width: 27vw;
   }
 }
 
